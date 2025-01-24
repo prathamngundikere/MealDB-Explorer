@@ -1,5 +1,8 @@
 package com.prathamngundikere.mealdb.category.presentation
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,9 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.prathamngundikere.mealdb.category.util.CategoryState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun CategoryScreen(
+fun SharedTransitionScope.CategoryScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     categoryState: CategoryState,
     navController: NavController
@@ -75,6 +79,7 @@ fun CategoryScreen(
                     key = { it.idCategory }
                 ) {
                     CategoryItem(
+                        animatedVisibilityScope = animatedVisibilityScope,
                         modifier = Modifier.animateItem(),
                         category = it,
                         navController = navController

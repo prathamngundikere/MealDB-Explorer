@@ -1,5 +1,7 @@
 package com.prathamngundikere.mealdb.core.presentation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -13,6 +15,7 @@ import com.prathamngundikere.mealdb.core.util.CategoryRecipeList
 import com.prathamngundikere.mealdb.core.util.CategoryScreen
 import com.prathamngundikere.mealdb.recipeList.presentation.CategoryRecipeListScreen
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(){
 
@@ -21,24 +24,28 @@ fun MainScreen(){
     val categoryListViewModel = hiltViewModel<CategoryListViewModel>()
     val categoryState = categoryListViewModel.categoryState.collectAsState().value
 
-    NavHost(
-        navController = navController,
-        startDestination = CategoryScreen
-    ) {
-        composable<CategoryScreen> {
-            CategoryScreen(
-                categoryState = categoryState,
-                navController = navController
-            )
-        }
-        composable<CategoryRecipeList> {
-            val args = it.toRoute<CategoryRecipeList>()
-            CategoryRecipeListScreen(
-                strCategory = args.strCategory,
-                strCategoryDescription = args.strCategoryDescription,
-                strCategoryThumb = args.strCategoryThumb,
-                navController = navController
-            )
+    SharedTransitionLayout {
+        NavHost(
+            navController = navController,
+            startDestination = CategoryScreen
+        ) {
+            composable<CategoryScreen> {
+                CategoryScreen(
+                    animatedVisibilityScope = this@composable,
+                    categoryState = categoryState,
+                    navController = navController
+                )
+            }
+            composable<CategoryRecipeList> {
+                val args = it.toRoute<CategoryRecipeList>()
+                CategoryRecipeListScreen(
+                    animatedVisibilityScope = this@composable,
+                    strCategory = args.strCategory,
+                    strCategoryDescription = args.strCategoryDescription,
+                    strCategoryThumb = args.strCategoryThumb,
+                    navController = navController
+                )
+            }
         }
     }
 }

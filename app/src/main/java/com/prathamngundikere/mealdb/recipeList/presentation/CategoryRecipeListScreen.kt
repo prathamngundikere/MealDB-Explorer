@@ -1,5 +1,8 @@
 package com.prathamngundikere.mealdb.recipeList.presentation
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +22,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,9 +40,10 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun CategoryRecipeListScreen(
+fun SharedTransitionScope.CategoryRecipeListScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     strCategory: String,
     strCategoryDescription: String,
@@ -62,6 +65,11 @@ fun CategoryRecipeListScreen(
             TopAppBar(
                 title = {
                     Text(
+                        modifier = Modifier
+                            .sharedBounds(
+                            sharedContentState = rememberSharedContentState(key = strCategory),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        ),
                         text = strCategory,
                         style = MaterialTheme.typography.headlineLarge
                     )
@@ -123,6 +131,10 @@ fun CategoryRecipeListScreen(
                     if (imageState is AsyncImagePainter.State.Success) {
                         Image(
                             modifier = Modifier
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = strCategoryThumb),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
                                 .fillMaxWidth()
                                 .height(250.dp)
                                 .clip(RoundedCornerShape(28.dp)),
