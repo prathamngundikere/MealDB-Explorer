@@ -83,23 +83,34 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "navigate back",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             )
-        }
+        },
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+            color = MaterialTheme.colorScheme.secondaryContainer
+            )
+            .sharedBounds(
+            sharedContentState = rememberSharedContentState(
+                key = strCategory + "color"
+            ),
+            animatedVisibilityScope = animatedVisibilityScope
+        ),
     ) {
         LazyColumn(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
                 .background(
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.secondaryContainer
                 ),
             state = rememberLazyListState,
             contentPadding = PaddingValues(15.dp),
@@ -112,7 +123,11 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(250.dp)
-                        .clip(RoundedCornerShape(28.dp)),
+                        .clip(RoundedCornerShape(28.dp))
+                        .sharedElement(
+                            state = rememberSharedContentState(key = strCategoryThumb),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     if (imageState is AsyncImagePainter.State.Error) {
@@ -131,10 +146,6 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                     if (imageState is AsyncImagePainter.State.Success) {
                         Image(
                             modifier = Modifier
-                                .sharedElement(
-                                    state = rememberSharedContentState(key = strCategoryThumb),
-                                    animatedVisibilityScope = animatedVisibilityScope
-                                )
                                 .fillMaxWidth()
                                 .height(250.dp)
                                 .clip(RoundedCornerShape(28.dp)),

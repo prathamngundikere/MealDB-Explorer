@@ -68,19 +68,31 @@ fun SharedTransitionScope.CategoryItem(
                 }
             ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.secondaryContainer
+                )
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = category.strCategory + "color"
+                    ),
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
                     .clip(RoundedCornerShape(28.dp))
-                    .background(color = MaterialTheme.colorScheme.surfaceBright),
+                    .sharedElement(
+                        state = rememberSharedContentState(key = category.strCategoryThumb),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 if (imageState is AsyncImagePainter.State.Error) {
@@ -99,10 +111,6 @@ fun SharedTransitionScope.CategoryItem(
                 if (imageState is AsyncImagePainter.State.Success) {
                     Image(
                         modifier = Modifier
-                            .sharedElement(
-                                state = rememberSharedContentState(key = category.strCategoryThumb),
-                                animatedVisibilityScope = animatedVisibilityScope
-                            )
                             .fillMaxWidth()
                             .height(250.dp)
                             .clip(RoundedCornerShape(28.dp)),
@@ -115,15 +123,15 @@ fun SharedTransitionScope.CategoryItem(
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
                     .sharedBounds(
                         sharedContentState = rememberSharedContentState(key = category.strCategory),
                         animatedVisibilityScope = animatedVisibilityScope
-                    )
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    ),
                 text = category.strCategory,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
