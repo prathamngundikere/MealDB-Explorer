@@ -68,14 +68,14 @@ fun SharedTransitionScope.CategoryItem(
                 }
             ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer
+                    color = MaterialTheme.colorScheme.surface
                 )
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(
@@ -131,7 +131,7 @@ fun SharedTransitionScope.CategoryItem(
                     ),
                 text = category.strCategory,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(

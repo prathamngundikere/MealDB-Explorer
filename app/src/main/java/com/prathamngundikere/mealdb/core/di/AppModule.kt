@@ -6,6 +6,9 @@ import com.prathamngundikere.mealdb.category.data.remote.CategoryApi
 import com.prathamngundikere.mealdb.category.data.repository.CategoryListRepositoryImpl
 import com.prathamngundikere.mealdb.category.domain.repository.CategoryListRepository
 import com.prathamngundikere.mealdb.core.database.AppDatabase
+import com.prathamngundikere.mealdb.recipeList.data.remote.MealListApi
+import com.prathamngundikere.mealdb.recipeList.data.repository.MealListRepositoryImpl
+import com.prathamngundikere.mealdb.recipeList.domain.repository.MealListRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,6 +43,17 @@ object AppModule {
             .create(CategoryApi::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun providesRecipeListApi(): MealListApi {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://www.themealdb.com/")
+            .client(client)
+            .build()
+            .create(MealListApi::class.java)
+    }
+
     @Provides
     @Singleton
     fun providesAppDatabase(app: Application): AppDatabase {
@@ -55,6 +69,14 @@ object AppModule {
         categoryApi: CategoryApi,
         appDatabase: AppDatabase
     ): CategoryListRepository {
-        return CategoryListRepositoryImpl(categoryApi,appDatabase)
+        return CategoryListRepositoryImpl(categoryApi, appDatabase)
+    }
+
+    @Provides
+    fun provideMealListRepo(
+        mealListApi: MealListApi,
+        appDatabase: AppDatabase
+    ): MealListRepository {
+        return MealListRepositoryImpl(mealListApi, appDatabase)
     }
 }

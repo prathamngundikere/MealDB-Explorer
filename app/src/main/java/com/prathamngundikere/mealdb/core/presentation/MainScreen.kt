@@ -14,6 +14,7 @@ import com.prathamngundikere.mealdb.category.presentation.CategoryScreen
 import com.prathamngundikere.mealdb.core.util.CategoryRecipeList
 import com.prathamngundikere.mealdb.core.util.CategoryScreen
 import com.prathamngundikere.mealdb.recipeList.presentation.CategoryRecipeListScreen
+import com.prathamngundikere.mealdb.recipeList.presentation.MealListViewModel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -23,6 +24,9 @@ fun MainScreen(){
 
     val categoryListViewModel = hiltViewModel<CategoryListViewModel>()
     val categoryState = categoryListViewModel.categoryState.collectAsState().value
+
+    val  mealListViewModel = hiltViewModel<MealListViewModel>()
+    val mealListState = mealListViewModel.mealListState.collectAsState().value
 
     SharedTransitionLayout {
         NavHost(
@@ -43,7 +47,11 @@ fun MainScreen(){
                     strCategory = args.strCategory,
                     strCategoryDescription = args.strCategoryDescription,
                     strCategoryThumb = args.strCategoryThumb,
-                    navController = navController
+                    navController = navController,
+                    mealListState = mealListState,
+                    category = {
+                        mealListViewModel.getMealList(it)
+                    }
                 )
             }
         }

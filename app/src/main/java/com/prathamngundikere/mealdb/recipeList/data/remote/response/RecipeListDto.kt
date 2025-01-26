@@ -1,5 +1,8 @@
 package com.prathamngundikere.mealdb.recipeList.data.remote.response
 
+import com.google.gson.annotations.SerializedName
+
 data class RecipeListDto(
-    val meals: List<MealDto>
+    @SerializedName("meals")
+    val meals: List<MealListDto>
 )

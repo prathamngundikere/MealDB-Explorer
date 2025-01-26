@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +43,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
+import com.prathamngundikere.mealdb.recipeList.util.MealListState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -48,8 +53,14 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
     strCategory: String,
     strCategoryDescription: String,
     strCategoryThumb: String,
-    navController: NavController
+    navController: NavController,
+    mealListState: MealListState,
+    category: (String) -> Unit
 ) {
+
+    LaunchedEffect(strCategory) {
+        category(strCategory)
+    }
 
     val rememberLazyListState = rememberLazyListState()
 
@@ -83,20 +94,20 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "navigate back",
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 )
             )
         },
         modifier = modifier
             .fillMaxSize()
             .background(
-            color = MaterialTheme.colorScheme.secondaryContainer
+            color = MaterialTheme.colorScheme.surface
             )
             .sharedBounds(
             sharedContentState = rememberSharedContentState(
@@ -110,7 +121,7 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                 .fillMaxSize()
                 .padding(it)
                 .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer
+                    color = MaterialTheme.colorScheme.surface
                 ),
             state = rememberLazyListState,
             contentPadding = PaddingValues(15.dp),
@@ -164,6 +175,61 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+            }
+            if (mealListState.error != null) {
+                item(key = 3) {
+                    Box(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            text = mealListState.error,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+            if (mealListState.isLoading) {
+                item(key = 4) {
+                    Box(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            } else {
+                items(
+                    items = mealListState.mealList,
+                    key = { it.idMeal }
+                ) {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 15.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        thickness = 1.dp
+                    )
+                    RecipeListItem(
+                        meal = it
+                    )
+                }
+            }
+            item(key = 5) {
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(20.dp),
+                    contentAlignment = Alignment.TopCenter
+                ) {}
             }
         }
     }
