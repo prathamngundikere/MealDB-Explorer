@@ -13,9 +13,11 @@ MealDB Explorer is an Android food recipe application built using modern develop
 
 ## Screenshots
 
-![App Screenshot](https://raw.githubusercontent.com/prathamngundikere/MealDB-Explorer/refs/heads/master/resources/CategoryScreen.jpeg)
-![App Screenshot](https://raw.githubusercontent.com/prathamngundikere/MealDB-Explorer/refs/heads/master/resources/RecipeListScreen.jpeg)
-![App Screenshot](https://github.com/prathamngundikere/MealDB-Explorer/blob/master/resources/RecipeDescriptionScreen.jpeg)
+<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px">
+<img src="https://raw.githubusercontent.com/prathamngundikere/MealDB-Explorer/refs/heads/master/resources/CategoryScreen.jpeg" alt="screenshot" width="30%">
+<img src="https://raw.githubusercontent.com/prathamngundikere/MealDB-Explorer/refs/heads/master/resources/RecipeListScreen.jpeg" alt="screenshot" width="30%">
+<img src="https://github.com/prathamngundikere/MealDB-Explorer/blob/master/resources/RecipeDescriptionScreen.jpeg" alt="screenshot" width="30%">
+</div>
 
 ## Demo
 
