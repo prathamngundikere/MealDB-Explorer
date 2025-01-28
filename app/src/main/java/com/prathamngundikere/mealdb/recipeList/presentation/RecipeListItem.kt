@@ -1,7 +1,11 @@
 package com.prathamngundikere.mealdb.recipeList.presentation
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -25,16 +29,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
+import com.prathamngundikere.mealdb.core.util.MealDetailScreen
 import com.prathamngundikere.mealdb.recipeList.domain.model.Meal
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun RecipeListItem(
+fun SharedTransitionScope.RecipeListItem(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    meal: Meal
+    meal: Meal,
+    navController: NavController
 ) {
 
     val imageState = rememberAsyncImagePainter(
@@ -49,14 +58,28 @@ fun RecipeListItem(
             .fillMaxWidth()
             .height(75.dp)
             .clip(RoundedCornerShape(15.dp))
-            .background(MaterialTheme.colorScheme.surface),
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable(
+                enabled = true,
+                onClick = {
+                    navController.navigate(MealDetailScreen(
+                        idMeal = meal.idMeal,
+                        strMeal = meal.strMeal,
+                        strMealThumb = meal.strMealThumb
+                    ))
+                }
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
         Box(
             modifier = Modifier
                 .size(75.dp)
-                .clip(RoundedCornerShape(15.dp)),
+                .clip(RoundedCornerShape(15.dp))
+                .sharedElement(
+                    state = rememberSharedContentState(key = meal.strMealThumb),
+                    animatedVisibilityScope = animatedVisibilityScope
+                ),
             contentAlignment = Alignment.Center
         ) {
             if (imageState is AsyncImagePainter.State.Error) {

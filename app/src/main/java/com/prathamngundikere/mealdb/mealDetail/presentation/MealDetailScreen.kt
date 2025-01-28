@@ -1,4 +1,4 @@
-package com.prathamngundikere.mealdb.recipeList.presentation
+package com.prathamngundikere.mealdb.mealDetail.presentation
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -22,67 +20,67 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
-import com.prathamngundikere.mealdb.recipeList.util.MealListState
+import com.prathamngundikere.mealdb.mealDetail.util.MealDetailState
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SharedTransitionScope.CategoryRecipeListScreen(
+fun SharedTransitionScope.MealDetailScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    strCategory: String,
-    strCategoryDescription: String,
-    strCategoryThumb: String,
+    idMeal: String,
+    strMeal: String,
+    strMealThumb: String,
     navController: NavController,
-    mealListState: MealListState,
-    category: (String) -> Unit
+    mealDetailState: MealDetailState,
+    id: (String) -> Unit
 ) {
 
-    LaunchedEffect(strCategory) {
-        category(strCategory)
+    LaunchedEffect(idMeal) {
+        id(idMeal)
     }
 
     val rememberLazyListState = rememberLazyListState()
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     val imageState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(strCategoryThumb)
+            .data(strMealThumb)
             .size(Size.ORIGINAL)
             .build()
     ).state
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            LargeTopAppBar(
                 title = {
                     Text(
-                        modifier = Modifier
-                            .sharedBounds(
-                            sharedContentState = rememberSharedContentState(key = strCategory),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        ),
-                        text = strCategory,
-                        style = MaterialTheme.typography.headlineLarge
+                        text = strMeal,
+                        style = MaterialTheme.typography.headlineLarge,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 navigationIcon = {
@@ -101,20 +99,16 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
                     titleContentColor = MaterialTheme.colorScheme.primary
-                )
+                ),
+                scrollBehavior = scrollBehavior
             )
         },
         modifier = modifier
-            .sharedBounds(
-                sharedContentState = rememberSharedContentState(
-                    key = strCategory + "color"
-                ),
-                animatedVisibilityScope = animatedVisibilityScope
-            )
             .fillMaxSize()
             .background(
-            color = MaterialTheme.colorScheme.surface
-            ),
+                color = MaterialTheme.colorScheme.surface
+            )
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
         LazyColumn(
             modifier = Modifier
@@ -136,7 +130,11 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                         .height(250.dp)
                         .clip(RoundedCornerShape(28.dp))
                         .sharedElement(
-                            state = rememberSharedContentState(key = strCategoryThumb),
+                            state = rememberSharedContentState(
+                                key = mealDetailState
+                                    .mealDetail
+                                    .strMealThumb
+                            ),
                             animatedVisibilityScope = animatedVisibilityScope
                         ),
                     contentAlignment = Alignment.Center
@@ -161,66 +159,48 @@ fun SharedTransitionScope.CategoryRecipeListScreen(
                                 .height(250.dp)
                                 .clip(RoundedCornerShape(28.dp)),
                             painter = imageState.painter,
-                            contentDescription = strCategory,
+                            contentDescription = mealDetailState.mealDetail.idMeal,
                             contentScale = ContentScale.Crop
                         )
                     }
                 }
             }
             item(key = 1) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = strCategoryDescription,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            if (mealListState.error != null) {
-                item(key = 3) {
+                if (mealDetailState.error != null) {
                     Box(
                         modifier = modifier
                             .fillMaxWidth()
-                            .height(200.dp),
+                            .height(300.dp)
+                            .background(MaterialTheme.colorScheme.surface),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             modifier = Modifier
-                                .fillMaxWidth(),
-                            text = mealListState.error,
+                                .fillMaxSize(),
+                            text = mealDetailState.error,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.error
                         )
                     }
-                }
-            }
-            if (mealListState.isLoading) {
-                item(key = 4) {
+                } else if (mealDetailState.isLoading) {
                     Box(
                         modifier = modifier
                             .fillMaxWidth()
-                            .height(200.dp),
+                            .height(300.dp)
+                            .background(MaterialTheme.colorScheme.surface),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator()
                     }
-                }
-            } else {
-                items(
-                    items = mealListState.mealList,
-                    key = { it.idMeal }
-                ) {
-                    HorizontalDivider(
+                } else {
+                    Text(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 15.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        thickness = 1.dp
-                    )
-                    RecipeListItem(
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        meal = it,
-                        navController = navController
+                            .fillMaxWidth(),
+                        text = mealDetailState
+                            .mealDetail
+                            .strInstructions,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

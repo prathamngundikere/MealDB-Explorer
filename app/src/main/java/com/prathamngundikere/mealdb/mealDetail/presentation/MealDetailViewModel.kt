@@ -1,10 +1,10 @@
-package com.prathamngundikere.mealdb.recipeList.presentation
+package com.prathamngundikere.mealdb.mealDetail.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prathamngundikere.mealdb.core.util.Resource
-import com.prathamngundikere.mealdb.recipeList.domain.repository.MealListRepository
-import com.prathamngundikere.mealdb.recipeList.util.MealListState
+import com.prathamngundikere.mealdb.mealDetail.domain.repository.MealDetailRepository
+import com.prathamngundikere.mealdb.mealDetail.util.MealDetailState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,42 +14,39 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MealListViewModel @Inject constructor(
-    private val mealListRepository: MealListRepository
+class MealDetailViewModel @Inject constructor(
+    private val mealDetailRepository: MealDetailRepository
 ): ViewModel() {
 
-    private val _mealListState = MutableStateFlow(MealListState())
-    val mealListState = _mealListState.asStateFlow()
+    private val _mealDetailState = MutableStateFlow(MealDetailState())
+    val mealDetailState = _mealDetailState.asStateFlow()
 
-     fun getMealList(category: String) {
-
+    fun getMealDetail(idMeal: String) {
         viewModelScope.launch {
-
-            _mealListState.update {
+            _mealDetailState.update {
                 it.copy(isLoading = true)
             }
-
-            mealListRepository.getMealList(category).collectLatest {
+            mealDetailRepository.getMealDetail(idMeal).collectLatest {
                 when(it) {
                     is Resource.Error -> {
-                        _mealListState.update {
-                            it.copy(error = "Failed to Load meals - " + it.error)
+                        _mealDetailState.update {
+                            it.copy(error = "Failed to Load Meal Detail - "+ it.error)
                         }
                     }
                     is Resource.Loading -> {
-                        _mealListState.update {
+                        _mealDetailState.update {
                             it.copy(isLoading = it.isLoading)
                         }
                     }
                     is Resource.Success -> {
-                        it.data?.let { mealList ->
-                            _mealListState.update {
+                        it.data?.let { mealDetailList ->
+                            _mealDetailState.update {
                                 it.copy(
-                                    mealList = mealList
+                                    mealDetail = mealDetailList[0]
                                 )
                             }
                         }
-                        _mealListState.update {
+                        _mealDetailState.update {
                             it.copy(isLoading = false)
                         }
                     }

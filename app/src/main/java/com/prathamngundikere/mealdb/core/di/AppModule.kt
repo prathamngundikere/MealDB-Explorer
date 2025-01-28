@@ -6,6 +6,9 @@ import com.prathamngundikere.mealdb.category.data.remote.CategoryApi
 import com.prathamngundikere.mealdb.category.data.repository.CategoryListRepositoryImpl
 import com.prathamngundikere.mealdb.category.domain.repository.CategoryListRepository
 import com.prathamngundikere.mealdb.core.database.AppDatabase
+import com.prathamngundikere.mealdb.mealDetail.data.remote.MealDetailApi
+import com.prathamngundikere.mealdb.mealDetail.data.repository.MealDetailRepositoryImpl
+import com.prathamngundikere.mealdb.mealDetail.domain.repository.MealDetailRepository
 import com.prathamngundikere.mealdb.recipeList.data.remote.MealListApi
 import com.prathamngundikere.mealdb.recipeList.data.repository.MealListRepositoryImpl
 import com.prathamngundikere.mealdb.recipeList.domain.repository.MealListRepository
@@ -54,6 +57,17 @@ object AppModule {
             .create(MealListApi::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun providesMealDetailApi(): MealDetailApi {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://www.themealdb.com/")
+            .client(client)
+            .build()
+            .create(MealDetailApi::class.java)
+    }
+
     @Provides
     @Singleton
     fun providesAppDatabase(app: Application): AppDatabase {
@@ -78,5 +92,13 @@ object AppModule {
         appDatabase: AppDatabase
     ): MealListRepository {
         return MealListRepositoryImpl(mealListApi, appDatabase)
+    }
+
+    @Provides
+    fun provideMealDetailRepo(
+        mealDetailApi: MealDetailApi,
+        appDatabase: AppDatabase
+    ): MealDetailRepository {
+        return MealDetailRepositoryImpl(mealDetailApi, appDatabase)
     }
 }

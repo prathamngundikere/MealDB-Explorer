@@ -13,6 +13,9 @@ import com.prathamngundikere.mealdb.category.presentation.CategoryListViewModel
 import com.prathamngundikere.mealdb.category.presentation.CategoryScreen
 import com.prathamngundikere.mealdb.core.util.CategoryRecipeList
 import com.prathamngundikere.mealdb.core.util.CategoryScreen
+import com.prathamngundikere.mealdb.core.util.MealDetailScreen
+import com.prathamngundikere.mealdb.mealDetail.presentation.MealDetailScreen
+import com.prathamngundikere.mealdb.mealDetail.presentation.MealDetailViewModel
 import com.prathamngundikere.mealdb.recipeList.presentation.CategoryRecipeListScreen
 import com.prathamngundikere.mealdb.recipeList.presentation.MealListViewModel
 
@@ -27,6 +30,9 @@ fun MainScreen(){
 
     val  mealListViewModel = hiltViewModel<MealListViewModel>()
     val mealListState = mealListViewModel.mealListState.collectAsState().value
+
+    val mealDetailViewModel = hiltViewModel<MealDetailViewModel>()
+    val mealDetailState = mealDetailViewModel.mealDetailState.collectAsState().value
 
     SharedTransitionLayout {
         NavHost(
@@ -51,6 +57,20 @@ fun MainScreen(){
                     mealListState = mealListState,
                     category = {
                         mealListViewModel.getMealList(it)
+                    }
+                )
+            }
+            composable<MealDetailScreen> {
+                val args = it.toRoute<MealDetailScreen>()
+                MealDetailScreen(
+                    animatedVisibilityScope = this@composable,
+                    idMeal = args.idMeal,
+                    strMeal = args.strMeal,
+                    strMealThumb = args.strMealThumb,
+                    navController = navController,
+                    mealDetailState = mealDetailState,
+                    id = {
+                        mealDetailViewModel.getMealDetail(it)
                     }
                 )
             }
