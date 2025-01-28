@@ -180,7 +180,7 @@ fun SharedTransitionScope.CategoryScreen(
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Button(
                                     onClick = {
-                                        uriHandler.openUri("https://github.com/prathamngundikere/Meal_App")
+                                        uriHandler.openUri("https://github.com/prathamngundikere/MealDB-Explorer")
                                     }
                                 ) {
                                     Text(
